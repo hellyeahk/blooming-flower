@@ -1,0 +1,184 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(ellipse at 50% 80%, #2a1a4a, #0b0818 70%);
+    overflow: hidden;
+  }
+
+  .glow {
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff4fa855, transparent 65%);
+    opacity: .1;
+    animation: glow 12s ease-in-out 2.2s infinite;
+  }
+  @keyframes glow {
+    0%, 100% { opacity: .1; }
+    35%, 75% { opacity: 1; }
+  }
+
+  /* perspective = bikin efek 3D (dekat kelihatan besar, jauh kecil) */
+  .flower {
+    position: relative;
+    width: 300px;
+    height: 500px;
+    perspective: 900px;
+    perspective-origin: 50% 40%;
+    transform-origin: 50% 100%;
+    animation: sway 6s ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50%      { transform: rotate(2deg); }
+  }
+
+  /* Batang tumbuh ke atas */
+  .stem {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 10px;
+    height: 0;
+    margin-left: -5px;
+    border-radius: 5px;
+    background: linear-gradient(#4ade80, #14532d);
+    animation: grow 2s ease-out forwards;
+  }
+  @keyframes grow { to { height: 300px; } }
+
+  /* Daun tumbuh dari batang */
+  .leaf {
+    position: absolute;
+    left: 50%;
+    bottom: 80px;
+    width: 80px;
+    height: 44px;
+    border-radius: 100% 0 100% 0;
+    background: linear-gradient(135deg, #4ade80, #166534);
+    transform-origin: 0 100%;
+    transform: scaleX(var(--sx)) rotate(-20deg) scale(0);
+    animation: leaf 1s ease-out 1s forwards;
+  }
+  .leaf.right { --sx: 1; }
+  .leaf.left  { --sx: -1; bottom: 140px; }
+  @keyframes leaf {
+    to { transform: scaleX(var(--sx)) rotate(-20deg) scale(1); }
+  }
+
+  /* Kepala bunga naik bareng ujung batang.
+     preserve-3d = anak-anaknya (kelopak) tetap 3D, nggak diratakan */
+  .head {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(-24deg);          /* dilihat sedikit dari atas */
+    animation: rise 2s ease-out forwards;
+  }
+  @keyframes rise { to { bottom: 300px; } }
+
+  /* Kelopak:
+     --a    = arah kelopak (diputar mengelilingi sumbu tegak)
+     --open = seberapa miring kelopak saat mekar penuh */
+  .petal {
+    position: absolute;
+    left: calc(var(--w) / -2);
+    bottom: 0;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+    transform-origin: 50% 100%;
+    transform: rotateY(var(--a)) rotateX(8deg) scale(.5);   /* kondisi kuncup */
+    animation: bloom 12s ease-in-out infinite;
+    animation-delay: calc(2.2s + var(--delay));
+    box-shadow: 0 0 18px #ff4fa866;
+  }
+  @keyframes bloom {
+    0%, 4%  { transform: rotateY(var(--a)) rotateX(8deg) scale(.5); }
+    35%, 75% { transform: rotateY(var(--a)) rotateX(var(--open)) scale(1); }
+    100%    { transform: rotateY(var(--a)) rotateX(8deg) scale(.5); }
+  }
+
+  .outer {
+    --w: 64px; --h: 150px; --open: 82deg; --delay: 0s;
+    --a: calc(var(--i) * 45deg);
+    background: linear-gradient(#e0409a, #ff8cc8 60%, #ffd0ea);
+  }
+  .middle {
+    --w: 54px; --h: 120px; --open: 56deg; --delay: .4s;
+    --a: calc(var(--i) * 45deg + 22.5deg);
+    background: linear-gradient(#ff5fb0, #ffa8d8 60%, #ffe3f2);
+  }
+  .inner {
+    --w: 44px; --h: 92px; --open: 28deg; --delay: .8s;
+    --a: calc(var(--i) * 60deg + 10deg);
+    background: linear-gradient(#ff8cc8, #ffc4e4 60%, #fff0f8);
+  }
+
+  /* Bagian tengah bunga (cakram datar) */
+  .core {
+    position: absolute;
+    left: -24px;
+    top: -24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(#fff6a8, #ffb300);
+    box-shadow: 0 0 28px #ffd54f;
+    transform: rotateX(90deg);
+  }
+
+  /* Benang sari: muncul setelah kelopak terbuka */
+  .stamen {
+    position: absolute;
+    left: -1.5px;
+    bottom: 0;
+    width: 3px;
+    height: 46px;
+    background: #ffe082;
+    transform-origin: 50% 100%;
+    transform: rotateY(calc(var(--i) * 45deg)) rotateX(24deg) scale(0);
+    animation: stamen 12s ease-in-out 2.2s infinite;
+  }
+  .stamen::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ffb300;
+    box-shadow: 0 0 8px #ffd54f;
+  }
+  @keyframes stamen {
+    0%, 20% { transform: rotateY(calc(var(--i) * 45deg)) rotateX(24deg) scale(0); }
+    42%, 72% { transform: rotateY(calc(var(--i) * 45deg)) rotateX(24deg) scale(1); }
+    90%, 100% { transform: rotateY(calc(var(--i) * 45deg)) rotateX(24deg) scale(0); }
+  }
+
+  /* Kunang-kunang yang naik ke atas */
+  .spark {
+    position: fixed;
+    bottom: -10px;
+    left: var(--x);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ffe9a8;
+    box-shadow: 0 0 10px #ffd36b;
+    opacity: 0;
+    animation: rise-spark var(--t) linear var(--d) infinite;
+  }
+  @keyframes rise-spark {
+    0%   { transform: translate(0, 0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: .8; }
+    100% { transform: translate(var(--dx), -110vh); opacity: 0; }
+  }
